@@ -44,20 +44,98 @@ Each file is self-contained and runs standalone:
 ```bash
 python3 numpy_linalg.py
 
-# Week 2: Matplotlib Visualization + Numerical Calculus
-
-**June 24-30, 2026** | Status: ✅ Complete
-
----
+# Week 2 – NumPy & Matplotlib
 
 ## Overview
 
-6 Python programs implementing data visualization and numerical calculus. All tested and working.
+This week focuses on learning **NumPy** for numerical computing and **Matplotlib** for data visualization. The programs cover mathematical operations, numerical methods, and different types of plots used in Data Science and Machine Learning.
 
-- **Programs:** 6 files (780+ lines)
-- **Visualizations:** 16 PNG files (150 DPI)
-- **Runtime:** ~2 minutes
-- **Dependencies:** numpy, matplotlib
+---
+
+## Topics Covered
+
+### NumPy
+- Arrays
+- Mathematical Functions
+- Numerical Computation
+- Numerical Differentiation
+- Linear Algebra Basics
+
+### Matplotlib
+- Line Plots
+- Bar Charts
+- Scatter Plots
+- Histograms
+- Pie Charts
+- Multiple Subplots
+- Plot Styling
+- Figure Customization
+- Saving Figures
+
+---
+
+## Programs
+
+### Day 1 – Basic Plots
+- Line Plot
+- Bar Chart
+- Scatter Plot
+
+### Day 2 – Subplots & Styling
+- Multiple Subplots
+- Titles
+- Labels
+- Legends
+- Grid
+- Colors
+- Figure Size
+
+### Day 3 – Mathematical Functions
+- Sine Graph
+- Cosine Graph
+- Exponential Function
+- Logarithmic Function
+- Polynomial Function
+
+### Day 4 – Advanced Plots
+- Histogram
+- Pie Chart
+- Box Plot
+- Customized Charts
+
+### Day 5 – NumPy + Matplotlib
+- Random Data Visualization
+- Statistical Graphs
+- Array Visualization
+- Combined Numerical Analysis
+
+### Numerical Methods
+- Numerical Differentiation
+- Approximation Techniques
+- Calculus using Python
+
+---
+
+## Skills Learned
+
+- Data Visualization
+- Numerical Computing
+- Scientific Plotting
+- Plot Customization
+- Mathematical Modeling
+- Working with Arrays
+- Numerical Analysis
+- Saving Graphs as Images
+
+---
+
+## Technologies Used
+
+- Python 3
+- NumPy
+- Matplotlib
+- Google Colab
+- Git & GitHub
 
 ---
 
@@ -65,9 +143,49 @@ python3 numpy_linalg.py
 
 ```bash
 pip install numpy matplotlib
+
 python day1_basic_plots.py
 python day2_subplots_styling.py
 python day3_mathematical_functions.py
 python day4_advanced_plots.py
 python day5_numpy_matplotlib_combined.py
 python calculus_numerical_methods.py
+```
+
+---
+
+## Repository Structure
+
+```
+Week-2-NumPy-Matplotlib/
+│
+├── day1_basic_plots.py
+├── day2_subplots_styling.py
+├── day3_mathematical_functions.py
+├── day4_advanced_plots.py
+├── day5_numpy_matplotlib_combined.py
+├── calculus_numerical_methods.py
+└── README.md
+```
+
+---
+
+## Learning Outcome
+
+After completing Week 2, I can:
+
+- Create professional data visualizations.
+- Work with NumPy arrays efficiently.
+- Plot mathematical functions.
+- Customize charts and graphs.
+- Perform basic numerical methods.
+- Combine NumPy and Matplotlib for data analysis.
+- Build visualization programs for Data Science and Machine Learning.
+
+---
+
+## Author
+
+**Manoj Dio**
+
+Learning Python, Data Analysis, Machine Learning, and Artificial Intelligence through hands-on coding practice.
