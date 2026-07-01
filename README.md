@@ -43,3 +43,31 @@ Each file is self-contained and runs standalone:
 
 ```bash
 python3 numpy_linalg.py
+
+# Week 2: Matplotlib Visualization + Numerical Calculus
+
+**June 24-30, 2026** | Status: ✅ Complete
+
+---
+
+## Overview
+
+6 Python programs implementing data visualization and numerical calculus. All tested and working.
+
+- **Programs:** 6 files (780+ lines)
+- **Visualizations:** 16 PNG files (150 DPI)
+- **Runtime:** ~2 minutes
+- **Dependencies:** numpy, matplotlib
+
+---
+
+## Quick Start
+
+```bash
+pip install numpy matplotlib
+python day1_basic_plots.py
+python day2_subplots_styling.py
+python day3_mathematical_functions.py
+python day4_advanced_plots.py
+python day5_numpy_matplotlib_combined.py
+python calculus_numerical_methods.py
