@@ -1,0 +1,32 @@
+-- ============================================================
+-- sample_data.sql
+-- ============================================================
+
+DROP TABLE IF EXISTS employees;
+
+CREATE TABLE employees (
+    id          INTEGER PRIMARY KEY,
+    first_name  VARCHAR(50)  NOT NULL,
+    last_name   VARCHAR(50)  NOT NULL,
+    department  VARCHAR(50),
+    salary      DECIMAL(10, 2),
+    hire_date   DATE,
+    email       VARCHAR(100)
+);
+
+INSERT INTO employees (id, first_name, last_name, department, salary, hire_date, email) VALUES
+(1,  'Ananya', 'Rao',      'Engineering', 85000.00, '2021-03-15', 'ananya.rao@example.com'),
+(2,  'Ravi',   'Kumar',    'Engineering', 92000.00, '2019-07-01', 'ravi.kumar@example.com'),
+(3,  'Sara',   'Fischer',  'Marketing',   61000.00, '2022-01-10', 'sara.fischer@example.com'),
+(4,  'Wei',    'Chen',     'Engineering', 78000.00, '2023-05-20', 'wei.chen@example.com'),
+(5,  'Priya',  'Nair',     'Sales',       55000.00, '2020-11-02', 'priya.nair@example.com'),
+(6,  'Lukas',  'Becker',   'Sales',       58000.00, '2021-09-14', 'lukas.becker@example.com'),
+(7,  'Meera',  'Iyer',     'HR',          49000.00, '2018-04-23', 'meera.iyer@example.com'),
+(8,  'Tom',    'Schmidt',  'Marketing',   64000.00, '2022-08-30', 'tom.schmidt@example.com'),
+(9,  'Fatima', 'Ahmed',    'Engineering', 99000.00, '2017-02-11', NULL),
+(10, 'Karan',  'Mehta',    'Sales',       53000.00, '2023-01-05', 'karan.mehta@example.com'),
+(11, 'Hana',   'Yamada',   'HR',          51000.00, '2020-06-18', 'hana.yamada@example.com'),
+(12, 'Ivan',   'Petrov',   'Engineering', 88000.00, '2019-12-01', 'ivan.petrov@example.com'),
+(13, 'Nina',   'Costa',    'Marketing',   59500.00, '2021-10-09', NULL),
+(14, 'Arjun',  'Desai',    'Sales',       47000.00, '2023-03-27', 'arjun.desai@example.com'),
+(15, 'Elena',  'Volkov',   'Engineering', 91000.00, '2018-09-19', 'elena.volkov@example.com');
