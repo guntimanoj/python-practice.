@@ -1,0 +1,171 @@
+"""
+SQL - Subqueries, Nested Queries, CTEs
+--------------------------------------------------------------
+
+import sqlite3
+
+conn = sqlite3.connect(":memory:")
+cur = conn.cursor()
+
+# ===========================================================
+# SETUP: Sample database - employees, departments, projects
+# ===========================================================
+cur.executescript("""
+CREATE TABLE departments (
+    dept_id INTEGER PRIMARY KEY,
+    dept_name TEXT
+);
+
+CREATE TABLE employees (
+    emp_id INTEGER PRIMARY KEY,
+    name TEXT,
+    dept_id INTEGER,
+    manager_id INTEGER,
+    salary REAL,
+    age INTEGER
+);
+
+CREATE TABLE projects (
+    project_id INTEGER PRIMARY KEY,
+    emp_id INTEGER,
+    project_name TEXT,
+    budget REAL
+);
+
+INSERT INTO departments VALUES
+(1, 'Engineering'), (2, 'Data Science'), (3, 'Marketing'), (4, 'Physics Research');
+
+INSERT INTO employees VALUES
+(1, 'Amit', 1, NULL, 65000, 28),
+(2, 'Bhavna', 2, 1, 72000, 34),
+(3, 'Chetan', 1, 1, 58000, 25),
+(4, 'Divya', 4, NULL, 81000, 41),
+(5, 'Esha', 2, 2, 69000, 29),
+(6, 'Farhan', 1, 1, 90000, 37),
+(7, 'Gita', 3, NULL, 55000, 26),
+(8, 'Harish', NULL, NULL, 48000, 23);
+
+INSERT INTO projects VALUES
+(1, 1, 'API Redesign', 20000),
+(2, 1, 'Load Testing', 8000),
+(3, 2, 'Churn Model', 35000),
+(4, 4, 'Quantum Sim', 90000),
+(5, 6, 'Infra Migration', 50000);
+""")
+
+
+def run(title, query):
+    print("\n" + "=" * 70)
+    print(title)
+    print("=" * 70)
+    print(query.strip())
+    print("-" * 70)
+    cur.execute(query)
+    cols = [d[0] for d in cur.description]
+    print(" | ".join(cols))
+    for row in cur.fetchall():
+        print(" | ".join(str(v) for v in row))
+
+
+# ===========================================================
+# 1. SCALAR SUBQUERY - returns a single value, used like a constant
+# ===========================================================
+run("1. Scalar subquery: Employees earning more than the company average",
+    """
+    SELECT name, salary
+    FROM employees
+    WHERE salary > (SELECT AVG(salary) FROM employees)
+    ORDER BY salary DESC
+    """)
+
+# ===========================================================
+# 2. SUBQUERY WITH IN / NOT IN
+# ===========================================================
+run("2a. Subquery with IN: Employees who work on a project",
+    """
+    SELECT name
+    FROM employees
+    WHERE emp_id IN (SELECT emp_id FROM projects)
+    """)
+
+run("2b. Subquery with NOT IN: Employees with no assigned project",
+    """
+    SELECT name
+    FROM employees
+    WHERE emp_id NOT IN (SELECT emp_id FROM projects WHERE emp_id IS NOT NULL)
+    """)
+
+# ===========================================================
+# 3. CORRELATED SUBQUERY - inner query references the outer query's row
+# ===========================================================
+run("3. Correlated subquery: Employees earning more than their department's average",
+    """
+    SELECT e1.name, e1.dept_id, e1.salary
+    FROM employees e1
+    WHERE e1.salary > (
+        SELECT AVG(e2.salary)
+        FROM employees e2
+        WHERE e2.dept_id = e1.dept_id
+    )
+    """)
+
+# ===========================================================
+# 4. SUBQUERY IN FROM CLAUSE (derived table)
+# ===========================================================
+run("4. Subquery in FROM: Department averages, then filter on the derived table",
+    """
+    SELECT dept_id, avg_salary
+    FROM (
+        SELECT dept_id, AVG(salary) AS avg_salary
+        FROM employees
+        WHERE dept_id IS NOT NULL
+        GROUP BY dept_id
+    ) AS dept_avg
+    WHERE avg_salary > 60000
+    """)
+
+# ===========================================================
+# 5. CTE (WITH clause) - same logic as #4, but more readable
+# ===========================================================
+run("5. CTE: Department salary summary, referenced twice for clarity",
+    """
+    WITH dept_avg AS (
+        SELECT dept_id, AVG(salary) AS avg_salary, COUNT(*) AS headcount
+        FROM employees
+        WHERE dept_id IS NOT NULL
+        GROUP BY dept_id
+    )
+    SELECT d.dept_name, da.avg_salary, da.headcount
+    FROM dept_avg da
+    JOIN departments d ON d.dept_id = da.dept_id
+    WHERE da.avg_salary > 60000
+    ORDER BY da.avg_salary DESC
+    """)
+
+# ===========================================================
+# 6. RECURSIVE CTE - build a management chain
+# ===========================================================
+run("6. Recursive CTE: Full reporting chain under Amit (emp_id = 1)",
+    """
+    WITH RECURSIVE reports AS (
+        -- anchor: start with Amit
+        SELECT emp_id, name, manager_id, 0 AS level
+        FROM employees
+        WHERE emp_id = 1
+
+        UNION ALL
+
+        -- recursive step: find employees who report to anyone already in 'reports'
+        SELECT e.emp_id, e.name, e.manager_id, r.level + 1
+        FROM employees e
+        JOIN reports r ON e.manager_id = r.emp_id
+    )
+    SELECT emp_id, name, level
+    FROM reports
+    ORDER BY level
+    """)
+
+conn.close()
+print("\n" + "=" * 70)
+print("All subquery / CTE exercises completed successfully.")
+print("=" * 70)
