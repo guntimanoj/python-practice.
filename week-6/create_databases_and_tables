@@ -1,0 +1,141 @@
+PostgreSQL - Create Databases and Tables
+------------------------------------------------------------
+
+import psycopg2
+from psycopg2 import sql
+
+# ==========================================================
+# CONNECTION PARAMS - update these to match your setup
+# ==========================================================
+DB_HOST = "localhost"
+DB_PORT = "5432"
+DB_USER = "postgres"
+DB_PASSWORD = "your_password_here"
+NEW_DB_NAME = "company_db"
+
+
+def create_database():
+    """Connect to the default 'postgres' db and create a new database."""
+    conn = psycopg2.connect(
+        host=DB_HOST, port=DB_PORT, user=DB_USER,
+        password=DB_PASSWORD, dbname="postgres"
+    )
+    conn.autocommit = True  # CREATE DATABASE cannot run inside a transaction block
+    cur = conn.cursor()
+
+    cur.execute("SELECT 1 FROM pg_database WHERE datname = %s", (NEW_DB_NAME,))
+    exists = cur.fetchone()
+
+    if not exists:
+        cur.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(NEW_DB_NAME)))
+        print(f"Database '{NEW_DB_NAME}' created.")
+    else:
+        print(f"Database '{NEW_DB_NAME}' already exists, skipping creation.")
+
+    cur.close()
+    conn.close()
+
+
+def create_tables():
+    """Connect to the new database and create the schema."""
+    conn = psycopg2.connect(
+        host=DB_HOST, port=DB_PORT, user=DB_USER,
+        password=DB_PASSWORD, dbname=NEW_DB_NAME
+    )
+    cur = conn.cursor()
+
+    cur.execute("""
+        DROP TABLE IF EXISTS projects;
+        DROP TABLE IF EXISTS employees;
+        DROP TABLE IF EXISTS departments;
+
+        CREATE TABLE departments (
+            dept_id     SERIAL PRIMARY KEY,
+            dept_name   VARCHAR(100) NOT NULL UNIQUE
+        );
+
+        CREATE TABLE employees (
+            emp_id      SERIAL PRIMARY KEY,
+            name        VARCHAR(100) NOT NULL,
+            dept_id     INTEGER REFERENCES departments(dept_id),
+            salary      NUMERIC(10, 2) CHECK (salary >= 0),
+            age         INTEGER CHECK (age > 0),
+            hired_on    DATE DEFAULT CURRENT_DATE
+        );
+
+        CREATE TABLE projects (
+            project_id      SERIAL PRIMARY KEY,
+            emp_id          INTEGER REFERENCES employees(emp_id),
+            project_name    VARCHAR(150) NOT NULL,
+            budget          NUMERIC(12, 2),
+            start_date      DATE
+        );
+    """)
+    conn.commit()
+    print("Tables created: departments, employees, projects")
+
+    cur.close()
+    conn.close()
+
+
+def insert_sample_data():
+    """Insert sample rows into the new tables."""
+    conn = psycopg2.connect(
+        host=DB_HOST, port=DB_PORT, user=DB_USER,
+        password=DB_PASSWORD, dbname=NEW_DB_NAME
+    )
+    cur = conn.cursor()
+
+    cur.execute("""
+        INSERT INTO departments (dept_name) VALUES
+        ('Engineering'), ('Data Science'), ('Marketing'), ('Physics Research');
+    """)
+
+    cur.execute("""
+        INSERT INTO employees (name, dept_id, salary, age) VALUES
+        ('Amit', 1, 65000, 28),
+        ('Bhavna', 2, 72000, 34),
+        ('Chetan', 1, 58000, 25),
+        ('Divya', 4, 81000, 41);
+    """)
+
+    cur.execute("""
+        INSERT INTO projects (emp_id, project_name, budget, start_date) VALUES
+        (1, 'API Redesign', 20000, '2026-01-15'),
+        (2, 'Churn Model', 35000, '2026-02-01');
+    """)
+
+    conn.commit()
+    print("Sample data inserted.")
+
+    cur.close()
+    conn.close()
+
+
+def verify():
+    """Query the tables back to confirm everything was created correctly."""
+    conn = psycopg2.connect(
+        host=DB_HOST, port=DB_PORT, user=DB_USER,
+        password=DB_PASSWORD, dbname=NEW_DB_NAME
+    )
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM employees ORDER BY emp_id;")
+    rows = cur.fetchall()
+    colnames = [desc[0] for desc in cur.description]
+
+    print("\nEmployees table contents:")
+    print(" | ".join(colnames))
+    for row in rows:
+        print(" | ".join(str(v) for v in row))
+
+    cur.close()
+    conn.close()
+
+
+if __name__ == "__main__":
+    create_database()
+    create_tables()
+    insert_sample_data()
+    verify()
+    print("\nDatabase and tables setup complete.")
