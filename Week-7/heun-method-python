@@ -1,0 +1,40 @@
+import numpy as np
+
+def heun_method(f, y0, t0, t_end, h):
+    """
+    Solve dy/dt = f(t, y) using Heun's Method.
+    """
+
+    # Number of steps
+    n_steps = int((t_end - t0) / h)
+
+    # Arrays to store values
+    t_values = np.zeros(n_steps + 1)
+    y_values = np.zeros(n_steps + 1)
+
+    # Initial conditions
+    t_values[0] = t0
+    y_values[0] = y0
+
+    # Heun's Method
+    for i in range(n_steps):
+
+        t = t_values[i]
+        y = y_values[i]
+
+        # Step 1: First slope
+        k1 = f(t, y)
+
+        # Step 2: Predictor
+        y_predict = y + h * k1
+
+        # Step 3: Second slope
+        k2 = f(t + h, y_predict)
+
+        # Step 4: Corrector
+        y_values[i + 1] = y + h * (k1 + k2) / 2
+
+        # Update time
+        t_values[i + 1] = t + h
+
+    return t_values, y_values
