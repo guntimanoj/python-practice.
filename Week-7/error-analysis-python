@@ -1,0 +1,74 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+from euler import euler_method
+from heun_method import heun_method
+from rk4 import rk4_method
+
+# Test problem: dy/dt = t + y, y(0) = 1
+# Analytical solution: y = 2*e^t - t - 1
+def f(t, y):
+    return t + y
+
+def analytical(t):
+    return 2 * np.exp(t) - t - 1
+
+t0, y0 = 0, 1
+t_end = 1
+y_exact_end = analytical(t_end)
+
+# Range of step sizes, halving each time -- classic way to check convergence order
+h_values = [1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625, 0.0078125]
+
+methods = {
+    "Euler": euler_method,
+    "Heun": heun_method,
+    "RK4": rk4_method,
+}
+
+errors = {name: [] for name in methods}
+
+print(f"{'h':>10} | {'Euler err':>12} | {'Heun err':>12} | {'RK4 err':>12}")
+print("-" * 55)
+for h in h_values:
+    row = [h]
+    for name, method in methods.items():
+        _, y_vals = method(f, y0, t0, t_end, h)
+        err = abs(y_vals[-1] - y_exact_end)
+        errors[name].append(err)
+        row.append(err)
+    print(f"{row[0]:>10.7f} | {row[1]:>12.6e} | {row[2]:>12.6e} | {row[3]:>12.6e}")
+
+# Estimate the observed order of convergence for each method:
+# error ~ C * h^p  =>  log(error) = log(C) + p*log(h)
+# so p is the slope of a log-log plot of error vs h.
+print("\nEstimated order of convergence (slope of log(error) vs log(h)):")
+orders = {}
+for name in methods:
+    log_h = np.log(h_values)
+    log_err = np.log(errors[name])
+    slope, intercept = np.polyfit(log_h, log_err, 1)
+    orders[name] = slope
+    print(f"  {name:6s}: observed order p = {slope:.3f}")
+
+# --- Plot: log-log error vs step size ---
+fig, ax = plt.subplots(figsize=(7, 6))
+colors = {"Euler": "#1f77b4", "Heun": "#ff7f0e", "RK4": "#2ca02c"}
+for name in methods:
+    ax.loglog(h_values, errors[name], "o-", label=f"{name} (p≈{orders[name]:.2f})", color=colors[name])
+
+# Reference slope lines for order 1, 2, 4, anchored near the largest-h RK4 error
+ref_h = np.array(h_values)
+for p, style in [(1, ":"), (2, "--"), (4, "-.")]:
+    scale = errors["RK4"][0] / (h_values[0] ** p)
+    ax.loglog(ref_h, scale * ref_h ** p, style, color="gray", alpha=0.5,
+               label=f"reference slope {p}")
+
+ax.set_xlabel("step size h (log scale)")
+ax.set_ylabel("|error| at t=1 (log scale)")
+ax.set_title("Convergence: error vs. step size")
+ax.legend(fontsize=8)
+ax.grid(True, which="both", alpha=0.3)
+fig.tight_layout()
+fig.savefig("/home/claude/ode_practice/error_convergence.png", dpi=140)
+print("\nSaved error_convergence.png")
