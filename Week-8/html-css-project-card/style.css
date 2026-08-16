@@ -1,0 +1,27 @@
+body {
+    background-color: #f4f4f4;
+}
+
+.project-card {
+    background-color: white;
+    color: #222;
+    padding: 20px;
+    margin: 30px auto;
+    border: 1px solid gray;
+    max-width: 500px;
+}
+
+.project-card:hover {
+    border-color: blue;
+}
+
+.project-card a {
+    background-color: blue;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+}
+
+.project-card a:hover {
+    background-color: darkblue;
+}
