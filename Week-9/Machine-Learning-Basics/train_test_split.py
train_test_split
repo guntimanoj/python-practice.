@@ -1,0 +1,33 @@
+# Machine Learning Basics - Train/Test Split
+# X = Study Hours
+# y = Marks
+
+from sklearn.model_selection import train_test_split
+
+
+# Input / Feature data
+X = [[2], [3], [4], [5], [6], [7], [8], [9], [10], [11]]
+
+# Output / Target data
+y = [40, 50, 60, 70, 80, 90, 100, 110, 120, 130]
+
+
+# Split data:
+# 80% for training
+# 20% for testing
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+
+
+# Display results
+print("===== TRAINING DATA =====")
+print("X_train:", X_train)
+print("y_train:", y_train)
+
+print("\n===== TESTING DATA =====")
+print("X_test:", X_test)
+print("y_test:", y_test)
